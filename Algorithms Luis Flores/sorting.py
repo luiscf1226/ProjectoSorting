@@ -95,7 +95,7 @@ rootNode = Node()
 #set to none to have no children
 rootNode = None
 #array with numbers
-random_numbers = [92,3,13,100,4]
+random_numbers = [23, 56, 12,3,6, 89, 45, 67, 34, 90, 10, 78,100]
 print("Before sort:")
 print(random_numbers)
 final_array=[]
