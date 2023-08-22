@@ -3,6 +3,9 @@ import time
 import random
 
 #initialize
+#bars1
+bar_positions = []
+#
 pygame.init()
 #width and height for screen
 width,height=800,700
@@ -15,7 +18,7 @@ pygame.display.set_caption("Space dodge")
 background = pygame.image.load("background.jpg").convert_alpha() 
 
 # Transaparency
-alpha = 30  # 0 = fully transparent, 255 = fully opaque
+alpha = 10  # 0 = fully transparent, 255 = fully opaque
 background.set_alpha(alpha)
 
 #RGB colors
@@ -34,7 +37,7 @@ def drawMainTitle():
 def drawButtonSettings():
     #button settings 
     # button colors
-    color_button =(0, 170, 170)  
+    color_button =(170, 0, 0)  
 
     # button fonts
     smallfont = pygame.font.SysFont(None, 35)
@@ -47,7 +50,7 @@ def drawButtonSettings():
 def drawButtonGame():
     #button game
     # button colors
-    color_button =(0, 170, 170)  
+    color_button =(170, 0, 0)
 
     # button fonts
     smallfont = pygame.font.SysFont(None, 35)
@@ -98,31 +101,72 @@ def drawSort2Title():
     # set coordinates for text
     textTitleSurface5.midtop=(width//6,480)
     window.blit(textTitle5,textTitleSurface5)
-def drawSort1Box():
-    pygame.draw.rect(window, white, [width//4,190, 540, 220])
 def drawSort2Box():
     pygame.draw.rect(window, white, [width//4,440, 540, 220])
-def drawSetup():
-    window.blit(background,(0,0))
+def drawSort1Box():
+    pygame.draw.rect(window, white, [width//4,190, 540, 220])
+def drawBarsBox1(bar_positions):
+    color_red = (170, 0, 0)
+    bar_width = 10
+
+    for bar_x, bar_y, bar_height in bar_positions:
+        pygame.draw.rect(window, color_red, [bar_x, bar_y, bar_width, bar_height])
     pygame.display.update()
+def insertBars1():
+    #set bar area to the rectangle 
+    bar_width = 10
+    bar_area = pygame.Rect(width // 4, 190, 540, 220)
+    num_bars = 5
+
+    # distance between bars
+    distance_between_bars = 10
+
+    # Generate bars
+    
+    for i in range(num_bars):
+        #generate x coordinate
+        bar_x = bar_area.left + i * (bar_width + distance_between_bars)
+        #random height
+        bar_height = random.randint(50, 130)
+        #generate y coordinate
+        bar_y = bar_area.bottom - bar_height
+        bar_positions.append((bar_x, bar_y, bar_height))
+
+def drawSetup():
+    window.blit(background, (0, 0))  
+
+    drawMainTitle()
+
+    drawSettingsTitle()
+
+    drawstartGametitle()
+
+    drawSort1Title()
+
+    drawSort2Title()
+
+    drawButtonSettings()
+
+    drawButtonGame()
+
+    drawSort1Box()
+
+    drawSort2Box()
+   
 def main():
+    window.fill(white)
+    
+   
     #variable run to keep screen
     run=True
+    insertBars1()
     while run:
         for event in pygame.event.get():
             #user closes window with x click on screen
             if (event.type==pygame.QUIT):
                 run=False
                 break
-        drawMainTitle()
-        drawSettingsTitle()
-        drawstartGametitle()
-        drawSort1Title()
-        drawSort2Title()
-        drawButtonSettings()
-        drawButtonGame()
-        drawSort1Box()
-        drawSort2Box()
+        drawBarsBox1(bar_positions)
         drawSetup()
       
 
@@ -131,3 +175,9 @@ def main():
 #run file if its main
 if __name__=="__main__":
     main()
+# Area for the random bars (inside the white box)
+   ## for _ in range(num_bars):
+       # bar_height = random.randint(50, 130)
+       # bar_x = random.randint(bar_area.left, bar_area.right - bar_width)
+       # bar_y = random.randint(bar_area.top, bar_area.bottom - bar_height)
+      #  pygame.draw.rect(window, color_red, [bar_x, bar_y, bar_width, bar_height])
