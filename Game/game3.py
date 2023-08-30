@@ -247,36 +247,49 @@ def drawSetup(bar_positions1,bar_array1,bar_positions2,bar_array2):
       
     drawBarsBox1(bar_positions1,bar_array1)
     drawBarsBox2(bar_positions2,bar_array2)
+def drawSettingScreen():
+     #settings screen and button
+    screenSettings=pygame.display.set_mode((600,400))
+    pygame.display.set_caption('Settings')
+    background = pygame.image.load("background.jpg").convert()
+    background = pygame.transform.scale(background,(width,height)) 
+    screenSettings.blit(background, (0, 0))
+    pygame.display.update()
+def redrawMain():
+    #window code to set display and caption
+    window=pygame.display.set_mode((width,height))
+    pygame.display.set_caption("Space dodge")
 
+    #image
+    background = pygame.image.load("background.jpg").convert()
 
+    # Transaparency
+    alpha = 10  # 0 = fully transparent, 255 = fully opaque
+    background.set_alpha(alpha)
+    drawSetup(bar_positions1,bar_array1,bar_positions2,bar_array2)
+    drawBarsBox1(bar_positions1,bar_array1)
+    drawBarsBox2(bar_positions2,bar_array2)
+    pygame.display.update()
 def drawSettingSurface(window):
-    #surface to show box
     set_surface=pygame.Surface((600,400))
     set_surface.fill((200,200,200))
-    #close button option
-    set_button_close=pygame.Rect(350,10,40,30)
-    pygame.draw.rect(set_surface,(255,0,0),set_button_close)
-    #blit into main screen
     window.blit(set_surface,(200,150))
-    return set_button_close.move(200,150)
     
 def main():
   
-   
+    #setting button
+    settingButton=pygame.Rect(width//2.6,75, 110, 30) 
     #variable run to keep screen
     run=True
     sorted1 = False
     sorted2 = False
-    drawSetup(bar_positions1,bar_array1,bar_positions2,bar_array2)
+    drawSetup(bar_positions1,bar_array1,bar_positions2,bar_array1)
     #insert random bars to first array
     insertBars1()
      #insert random bars to second array
     insertBars2()
-    #setting button
-    settingButton=pygame.Rect(width//2.6,75, 110, 30) 
     show_settings=False
     while run:
-        settings_button=None
         for event in pygame.event.get():
             #user closes window with x click on screen
             if (event.type==pygame.QUIT):
@@ -290,24 +303,22 @@ def main():
                 if(settingButton.collidepoint(mouse_position)):
                     print("mouse clicked on settings")
                     show_settings=True
-            keys_pressed = pygame.key.get_pressed()
-            if keys_pressed[pygame.K_ESCAPE]:
-                    show_settings=False
-                    
-        #if show_settings:
-            #    settingButton=drawSettingSurface(window)
-            #    pygame.display.update()
-       # else:
-            #drawSetup(bar_positions1,bar_array1,bar_positions2,bar_array2)    
-            #pygame.display.update()
-  
-        if not sorted1:
+                    '''drawSettingScreen()
+                    run2 = True
+                    while run2:
+                        event = pygame.event.poll()
+                        if event.type == pygame.QUIT:
+                            redrawMain()'''
+        if show_settings:
+                drawSettingSurface(window)
+                pygame.display.update()
+        '''if not sorted1:
             bubblesort(bar_array1,bar_positions1,bar_area1)
             sorted1 = True  # array ordered so it can stop being sorted
         #order second array
         if not sorted2:
             quicksort(bar_array2,bar_positions2,bar_area2)
-            sorted2 = True  # array ordered so it can stop being sorted
+            sorted2 = True  # array ordered so it can stop being sorted'''
 
        
 
@@ -316,4 +327,3 @@ def main():
 #run file if its main
 if __name__=="__main__":
     main()
-
