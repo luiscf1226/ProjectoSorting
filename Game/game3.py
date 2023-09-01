@@ -33,44 +33,45 @@ bar_area2 = pygame.Rect(width//4, 440, 540, 220)
 
 def quicksort(arr, bar_positions, bar_area):
     if killThread:
-        return
-    # check if its less than 2 dont need to order array
-    if len(arr) < 2:
-        return arr
+        return []  # raise Exception("Terminar función recursiva")
+    else:
+        # check if its less than 2 dont need to order array
+        if len(arr) < 2:
+            return arr
+        # pivot element at first elememt
+        pivot = arr[0]
 
-    # pivot element at first elememt
-    pivot = arr[0]
+        # left and right arrays
+        leftArray = []
+        rightArray = []
 
-    # left and right arrays
-    leftArray = []
-    rightArray = []
+        # assign resulting left if smaller right if bigger than pivot element
+        for i in range(1, len(arr)):
+            if arr[i] < pivot:
+                leftArray.append(arr[i])
+            else:
+                rightArray.append(arr[i])
 
-    # assign resulting left if smaller right if bigger than pivot element
-    for i in range(1, len(arr)):
-        if arr[i] < pivot:
-            leftArray.append(arr[i])
-        else:
-            rightArray.append(arr[i])
+        # recursively order left and right, this creates more lefts and rights
+        leftSort = quicksort(leftArray, bar_positions, bar_area)
+        rightSort = quicksort(rightArray, bar_positions, bar_area)
 
-    # recursively order left and right, this creates more lefts and rights
-    leftSort = quicksort(leftArray, bar_positions, bar_area)
-    rightSort = quicksort(rightArray, bar_positions, bar_area)
+        # add to array left middle pivot and right
+        result = leftSort + [pivot] + rightSort
 
-    # add to array left middle pivot and right
-    result = leftSort + [pivot] + rightSort
+        # Update arr with the sorted result
+        # this lets the array be updated each recursion iteration
+        for i in range(len(result)):
+            arr[i] = result[i]
 
-    # Update arr with the sorted result
-    # this lets the array be updated each recursion iteration
-    for i in range(len(result)):
-        arr[i] = result[i]
+        # Update bar_positions with new heights
+        bar_positions = updateBarPositions(result, bar_area)
 
-    # Update bar_positions with new heights
-    bar_positions = updateBarPositions(result, bar_area)
-
-    # Redraw the screen to see changes reflected in bar_positions
-    pygame.draw.rect(window, white, [width//4, 440, 540, 220])
-    drawBarsBox1(bar_positions, result)
-    pygame.time.wait(500)  # delay of 0.5 seconds
+        # Redraw the screen to see changes reflected in bar_positions
+        pygame.draw.rect(window, white, [width//4, 440, 540, 220])
+        if killThread == False:
+            drawBarsBox1(bar_positions, result)
+            pygame.time.wait(400)  # delay of 0.5 seconds
     return result
 
 
@@ -91,7 +92,7 @@ def bubblesort(random_numbers, bar_positions, bar_area):
                 # Redraw the screen to see changes reflected in bar_positions
                 pygame.draw.rect(window, white, [width//4, 190, 540, 220])
                 drawBarsBox2(bar_positions, random_numbers)
-                pygame.time.wait(500)  # delay of0.5 seconds
+                pygame.time.wait(400)  # delay of0.4 seconds
 
 
 def drawBarsBox1(bar_positions, bar_heights):
@@ -99,6 +100,16 @@ def drawBarsBox1(bar_positions, bar_heights):
     bar_width = 10
     # gets x,y coordinates and height to be drawn from bars arrays
     for (bar_x, bar_y), bar_height in zip(bar_positions, bar_heights):
+        pygame.draw.rect(window, color_red, [
+            bar_x, bar_y, bar_width, bar_height])
+    pygame.display.update()
+
+
+def drawBarsBox2(bar_positions2, bar_heights2):
+    color_red = (170, 0, 0)
+    bar_width = 10
+    # gets x,y coordinates and height to be drawn from bars arrays
+    for (bar_x, bar_y), bar_height in zip(bar_positions2, bar_heights2):
         pygame.draw.rect(window, color_red, [
             bar_x, bar_y, bar_width, bar_height])
     pygame.display.update()
@@ -123,16 +134,6 @@ def insertBars1():
         bar_y = bar_area1.bottom - bar_height
         bar_positions1.append((bar_x, bar_y))
         bar_array1.append(bar_height)
-
-
-def drawBarsBox2(bar_positions2, bar_heights2):
-    color_red = (170, 0, 0)
-    bar_width = 10
-    # gets x,y coordinates and height to be drawn from bars arrays
-    for (bar_x, bar_y), bar_height in zip(bar_positions2, bar_heights2):
-        pygame.draw.rect(window, color_red, [
-            bar_x, bar_y, bar_width, bar_height])
-    pygame.display.update()
 
 
 def insertBars2():
@@ -246,10 +247,10 @@ def drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2):
     smallfont = pygame.font.SysFont(None, 35)
 
     # rendering text with different colors
-    text_button = smallfont.render('Start', True, white)
+    # text_button = smallfont.render('Start', True, white)
     # text = smallfont.render('start', True, white)
-    pygame.draw.rect(window, color_button, [width//2.6, 135, 110, 30])
-    window.blit(text_button, (width//2.5, 135))
+    # pygame.draw.rect(window, color_button, [width//2.6, 135, 110, 30])
+    # window.blit(text_button, (width//2.5, 135))
 
     # draws rectangle 1
     pygame.draw.rect(window, white, [width//4, 190, 540, 220])
@@ -273,8 +274,7 @@ def clearArrays():
 
 def main_menu():
     global killThread
-    sorted1 = False
-    sorted2 = False
+    startThread = False
     # insert random bars to arrays
     insertBars1()
     insertBars2()
@@ -285,17 +285,21 @@ def main_menu():
     bubblesort_thread = None
     quicksort_thread = None
 
+    startThread = True
+
     while True:
-        text_button = pygame.font.SysFont(
+        text_button_settings = pygame.font.SysFont(
             None, 35).render('Change', True, white)
+        text_button_start = pygame.font.SysFont(
+            None, 35).render('Start', True, white)
+        # text = smallfont.render('start', True, white)
         mx, my = pygame.mouse.get_pos()
         settingButton = pygame.Rect(width//2.6, 75, 110, 30)
+        startButton = pygame.Rect(width//2.6, 135, 110, 30)
         if settingButton.collidepoint((mx, my)):
             if click:
                 killThread = True
                 settings()
-                sorted1 = False
-                sorted2 = False
                 # insert random bars to arrays
                 clearArrays()
                 insertBars1()
@@ -303,8 +307,27 @@ def main_menu():
                 # draw all main_menu components
                 drawSetup(bar_positions1, bar_array1,
                           bar_positions2, bar_array2)
+                startThread = True
+
+        bubblesort_thread = threading.Thread(
+            target=bubblesort, args=(bar_array1, bar_positions1, bar_area1), daemon=True)
+        quicksort_thread = threading.Thread(
+            target=quicksort, args=(bar_array2, bar_positions2, bar_area2), daemon=True)
+        if startButton.collidepoint((mx, my)):
+            if click and startThread:
+                startThread = False
+                bubblesort_thread.start()
+                # startThread1 = False
+                pygame.display.update()
+                quicksort_thread.start()
+                pygame.display.update()
+                if bubblesort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
+                    startThread = True
+
         pygame.draw.rect(window, (170, 0, 0), settingButton)
-        window.blit(text_button, (width//2.5, 75))
+        window.blit(text_button_settings, (width//2.5, 75))
+        pygame.draw.rect(window, (170, 0, 0), startButton)
+        window.blit(text_button_start, (width//2.5, 135))
 
         click = False
         for event in pygame.event.get():
@@ -314,19 +337,7 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
-            if not sorted1:
-                bubblesort_thread = threading.Thread(
-                    target=bubblesort, args=(bar_array1, bar_positions1, bar_area1), daemon=True)
-                bubblesort_thread.start()
-                pygame.display.update()
-                sorted1 = True  # array ordered so it can stop being sorted
-            # order second array
-            """if not sorted2:
-                quicksort_thread = threading.Thread(
-                    target=quicksort, args=(bar_array2, bar_positions2, bar_area2), daemon=True)
-                quicksort_thread.start()
-                pygame.display.update()
-                sorted2 = True  # array ordered so it can stop being sorted"""
+
         if bubblesort_thread is not None and not bubblesort_thread.is_alive():
             bubblesort_thread = None
         if quicksort_thread is not None and not quicksort_thread.is_alive():
@@ -339,8 +350,11 @@ def main_menu():
 def settings():
     global killThread
     run = True
+    window.blit(background, (0, 0))
+    escapeToGoBack = pygame.font.SysFont(
+        None, 45).render('Press ESC to return to the main menu', True, white)
+    window.blit(escapeToGoBack, (width//7, 120))
     while run:
-        window.blit(background, (0, 0))
         for event in pygame.event.get():
             if (event.type == pygame.QUIT):
                 pygame.quit()
