@@ -30,6 +30,72 @@ bar_area1 = pygame.Rect(width // 4, 190, 540, 220)
 # area 2
 bar_area2 = pygame.Rect(width//4, 440, 540, 220)
 
+def heapify(random_numbers, n, i):
+    #position of the greatest number
+    greatest = i
+    #position of left child
+    left = 2*i+1
+    #position of right child
+    right = 2*i+2
+    #if left child is greatest than number alocated on greatest position
+    if left < n and random_numbers[i] < random_numbers[left]:
+        #then the greatest number is alocated in left child
+        greatest = left
+
+    #if right child is greatest than number alocated on greatest position
+    if right < n and random_numbers[greatest] < random_numbers[right]:
+        #then the greatest number is alocated in right child
+        greatest = right
+
+    #if greatest position has changed
+    if greatest != i:
+        #then we change the original greatest with the child that has the greatest number
+        random_numbers[i], random_numbers[greatest] = random_numbers[greatest], random_numbers[i]
+        #recall the function to continue evaluating
+        heapify(random_numbers,n,greatest)
+
+def heapsort(random_numbers,bar_positions,bar_area):
+    n=len(random_numbers)
+    #iterates the array from the end to the begining
+    for i in range(n,-1,-1):
+        #calls heapify to generates the max heap
+        heapify(random_numbers,n,i)
+
+    #iterates the array from the end to the second element
+    for i in range(n-1,0,-1):
+        #changes the max with the last position
+        random_numbers[i], random_numbers[0] = random_numbers[0], random_numbers[i]
+        #calls the heapify function with a reduced len of the array
+        heapify(random_numbers, i, 0)
+         # Update bar_positions with new heights
+        bar_positions = updateBarPositions(random_numbers, bar_area)
+        # Redraw the screen to see changes reflected in bar_positions
+        pygame.draw.rect(window, white, [width//4, 190, 540, 220])
+        drawBarsBox2(bar_positions, random_numbers)
+        pygame.time.wait(400)  # delay of0.4 seconds
+    return random_numbers
+
+#method to check if its sorted
+def is_sorted(arr):
+    for i in range(len(arr) - 1):
+        
+        if arr[i] > arr[i + 1]:
+            return False
+    return True
+#run bogo sort while its not sorted
+def bogosort(random_numbers,bar_positions,bar_area):
+    while not is_sorted(random_numbers):
+        if killThread:
+                return
+        else:
+            random.shuffle(random_numbers)
+            # Update bar_positions with new heights
+            bar_positions = updateBarPositions(random_numbers, bar_area)
+            # Redraw the screen to see changes reflected in bar_positions
+            pygame.draw.rect(window, white, [width//4, 190, 540, 220])
+            drawBarsBox2(bar_positions, random_numbers)
+            pygame.time.wait(400)  # delay of0.4 seconds
+    return random_numbers
 
 def quicksort(arr, bar_positions, bar_area):
     if killThread:
@@ -284,7 +350,8 @@ def main_menu():
     # create threads for sorting methods
     bubblesort_thread = None
     quicksort_thread = None
-
+    bogosort_thread=None
+    heapsort_thread=None
     startThread = True
 
     while True:
@@ -311,19 +378,28 @@ def main_menu():
 
         bubblesort_thread = threading.Thread(
             target=bubblesort, args=(bar_array1, bar_positions1, bar_area1), daemon=True)
+        bogosort_thread = threading.Thread(
+            target=bogosort, args=(bar_array1, bar_positions1, bar_area1), daemon=True)
+        heapsort_thread = threading.Thread(
+            target=heapsort, args=(bar_array1, bar_positions1, bar_area1), daemon=True)
         quicksort_thread = threading.Thread(
             target=quicksort, args=(bar_array2, bar_positions2, bar_area2), daemon=True)
         if startButton.collidepoint((mx, my)):
             if click and startThread:
                 startThread = False
-                bubblesort_thread.start()
+                #bubblesort_thread.start()
+                #bogosort_thread.start()
+                heapsort_thread.start()
                 # startThread1 = False
                 pygame.display.update()
                 quicksort_thread.start()
                 pygame.display.update()
-                if bubblesort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
+                '''if bubblesort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
+                    startThread = True'''
+                '''if bogosort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
+                    startThread = True'''
+                if heapsort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
                     startThread = True
-
         pygame.draw.rect(window, (170, 0, 0), settingButton)
         window.blit(text_button_settings, (width//2.5, 75))
         pygame.draw.rect(window, (170, 0, 0), startButton)
@@ -340,6 +416,10 @@ def main_menu():
 
         if bubblesort_thread is not None and not bubblesort_thread.is_alive():
             bubblesort_thread = None
+        if bogosort_thread is not None and not bogosort_thread.is_alive():
+            bogosort_thread = None
+        if heapsort_thread is not None and not heapsort_thread.is_alive():
+            heapsort_thread = None
         if quicksort_thread is not None and not quicksort_thread.is_alive():
             quicksort_thread = None
 
