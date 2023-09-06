@@ -101,16 +101,16 @@ print(random_numbers)
 final_array=[]
 #create threads with target and argumments to the function called
 thread1 = threading.Thread(target=quicksort, args=(random_numbers,))
-thread2 = threading.Thread(target=bogosort, args=(random_numbers.copy(),))
+#thread2 = threading.Thread(target=bogosort, args=(random_numbers.copy(),))
 thread3 = threading.Thread(target=insertNodes, args=(random_numbers.copy(),))
 #starts threads
 thread1.start()
-thread2.start()
+#thread2.start()
 thread3.start()
 printTreeinOrder(rootNode)
 #join means thread finished
 thread1.join()
 #join means thread finished
-thread2.join()
+#thread2.join()
 #join means thread finished
 thread3.join()
