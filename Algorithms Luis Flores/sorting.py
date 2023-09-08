@@ -2,7 +2,7 @@
 import random
 import threading
 import time
-#function to determine if array is sorted
+
 class Node:
 
     def __init__(self,data=0):
@@ -15,6 +15,7 @@ class Node:
 def insertNodes(array):
     for i in range(len(array)):
        insertCall(array[i])
+    printTreeinOrder(rootNode)
 #printTree in Order, will print left farthest child will then go right recursively
 def printTreeinOrder(node):
  
@@ -107,10 +108,11 @@ thread3 = threading.Thread(target=insertNodes, args=(random_numbers.copy(),))
 thread1.start()
 #thread2.start()
 thread3.start()
-printTreeinOrder(rootNode)
+
 #join means thread finished
 thread1.join()
 #join means thread finished
 #thread2.join()
 #join means thread finished
 thread3.join()
+#printTreeinOrder(rootNode)

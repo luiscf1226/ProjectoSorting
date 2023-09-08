@@ -29,7 +29,78 @@ bar_array2 = []
 bar_area1 = pygame.Rect(width // 4, 190, 540, 220)
 # area 2
 bar_area2 = pygame.Rect(width//4, 440, 540, 220)
+class Node:
 
+    def __init__(self,data=0):
+        #define left to none and right to none when initialize
+        #set data to value received by object
+        self.left=None
+        self.right=None
+        self.data=data
+#insert in nodes
+def insertNodes(array,rootNode,bar_positions,bar_area):
+    for i in range(len(array)):
+       insertCall(array[i],rootNode)
+    
+#printTree in Order, will print left farthest child will then go right recursively
+def printTreeinOrder(node,final_array,bar_positions,bar_area):
+ 
+    if(node != None):
+        #visit left child
+        printTreeinOrder(node.left,final_array,bar_positions,bar_area)
+        #go back and print node value
+        final_array.append(node.data)
+        print("Treesort: "+str(final_array))
+        # Update bar_positions with new heights
+        bar_positions = updateBarPositions(final_array, bar_area)
+        # Redraw the screen to see changes reflected in bar_positions
+        pygame.draw.rect(window, white, [width//4, 190, 540, 220])
+        drawBarsBox2(bar_positions, final_array)
+        pygame.time.wait(400)  # delay of0.4 seconds
+        pygame.display.update();
+
+        #visit right child
+        printTreeinOrder(node.right,final_array,bar_positions,bar_area)
+        
+       
+        
+#insertNode function recursively if smaller or greater will decide to go left child or right
+def insertNode(node,data):
+
+    #check if theres a root if not make it the current Node
+    if (node==None):
+        node=Node(data)
+        return node
+    
+    #if value is smaller than current in node it will be assigned to left node recursively
+    if(data<node.data):
+        node.left=insertNode(node.left,data)
+       
+    #if value is greater than current in node it will be assigned to left node recursively    
+    elif (data>node.data):
+        node.right=insertNode(node.right,data)    
+        
+   
+    #recursion ends and node is inserted with data checked if smaller or greater than current
+    return node
+def insertCall(data,rootNode):
+
+
+    rootNode=insertNode(rootNode,data)
+#
+def insertionSort(lista,bar_positions,bar_area):
+    for i in range(1, len(lista)):
+        key = lista[i]
+        for j in range(i - 1, -1, -1):
+            if key < lista[j]:
+                lista[j + 1] = lista[j]
+                lista[j] = key
+                #Update bar_positions with new heights
+                bar_positions = updateBarPositions(lista, bar_area)
+                # Redraw the screen to see changes reflected in bar_positions
+                pygame.draw.rect(window, white, [width//4, 190, 540, 220])
+                drawBarsBox1(bar_positions, lista)
+            pygame.time.wait(400)  # delay of0.4 seconds
 def heapify(random_numbers, n, i):
     #position of the greatest number
     greatest = i
@@ -71,7 +142,7 @@ def heapsort(random_numbers,bar_positions,bar_area):
         bar_positions = updateBarPositions(random_numbers, bar_area)
         # Redraw the screen to see changes reflected in bar_positions
         pygame.draw.rect(window, white, [width//4, 190, 540, 220])
-        drawBarsBox2(bar_positions, random_numbers)
+        drawBarsBox1(bar_positions, random_numbers)
         pygame.time.wait(400)  # delay of0.4 seconds
     return random_numbers
 
@@ -93,7 +164,7 @@ def bogosort(random_numbers,bar_positions,bar_area):
             bar_positions = updateBarPositions(random_numbers, bar_area)
             # Redraw the screen to see changes reflected in bar_positions
             pygame.draw.rect(window, white, [width//4, 190, 540, 220])
-            drawBarsBox2(bar_positions, random_numbers)
+            drawBarsBox1(bar_positions, random_numbers)
             pygame.time.wait(400)  # delay of0.4 seconds
     return random_numbers
 
@@ -157,7 +228,7 @@ def bubblesort(random_numbers, bar_positions, bar_area):
 
                 # Redraw the screen to see changes reflected in bar_positions
                 pygame.draw.rect(window, white, [width//4, 190, 540, 220])
-                drawBarsBox2(bar_positions, random_numbers)
+                drawBarsBox1(bar_positions, random_numbers)
                 pygame.time.wait(400)  # delay of0.4 seconds
 
 
@@ -339,6 +410,8 @@ def clearArrays():
 
 
 def main_menu():
+
+
     global killThread
     startThread = False
     # insert random bars to arrays
@@ -352,7 +425,15 @@ def main_menu():
     quicksort_thread = None
     bogosort_thread=None
     heapsort_thread=None
+    insertion_sort=None
+    
     startThread = True
+
+    #rootNode started
+
+    rootNode = Node()
+    #set to none to have no children
+ 
 
     while True:
         text_button_settings = pygame.font.SysFont(
@@ -384,22 +465,32 @@ def main_menu():
             target=heapsort, args=(bar_array1, bar_positions1, bar_area1), daemon=True)
         quicksort_thread = threading.Thread(
             target=quicksort, args=(bar_array2, bar_positions2, bar_area2), daemon=True)
+        thread3 = threading.Thread(target=insertNodes, args=(bar_array1,rootNode,bar_positions1,bar_area1), daemon=True)
+        insertionSort_thread= threading.Thread(target=insertionSort,args=(bar_array1,bar_positions1,bar_area1))
         if startButton.collidepoint((mx, my)):
             if click and startThread:
                 startThread = False
                 #bubblesort_thread.start()
+                #thread3.start()
                 #bogosort_thread.start()
-                heapsort_thread.start()
+               # heapsort_thread.start()
                 # startThread1 = False
+                insertionSort_thread.start()
                 pygame.display.update()
                 quicksort_thread.start()
                 pygame.display.update()
+                #thread3.join()
+                #printTreeinOrder(rootNode,bar_array1,bar_positions1,bar_area1)
+                
                 '''if bubblesort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
                     startThread = True'''
                 '''if bogosort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
                     startThread = True'''
-                if heapsort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
+                '''if heapsort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
+                    startThread = True'''
+                if insertionSort_thread.is_alive() == False and quicksort_thread.is_alive() == False:
                     startThread = True
+                
         pygame.draw.rect(window, (170, 0, 0), settingButton)
         window.blit(text_button_settings, (width//2.5, 75))
         pygame.draw.rect(window, (170, 0, 0), startButton)
@@ -422,6 +513,7 @@ def main_menu():
             heapsort_thread = None
         if quicksort_thread is not None and not quicksort_thread.is_alive():
             quicksort_thread = None
+    
 
         pygame.display.update()
         clock.tick(60)
