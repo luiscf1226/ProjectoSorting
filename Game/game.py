@@ -320,10 +320,6 @@ def updateBarPositions(bar_heights, reference_rect):
     return new_positions
 
 
-def clearScreen():
-    window.fill((255, 255, 255))
-
-
 def drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2):
     window.blit(background, (0, 0))
     # Title object
@@ -377,9 +373,6 @@ def drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2):
     textTitleSurface5.midtop = (width//6, 480)
     window.blit(textTitle5, textTitleSurface5)
     # button settings
-    # button colors
-    color_button = (170, 0, 0)
-
     # button fonts
     smallfont = pygame.font.SysFont(None, 35)
 
@@ -423,13 +416,7 @@ def main_menu(algo1, algo2):
     # draw all main_menu components
     drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2)
 
-    # create threads for sorting methods
-    """bubblesort_thread = None
-    quicksort_thread = None
-    bogosort_thread = None
-    heapsort_thread = None
-    insertion_sort = None"""
-
+    # creating threads
     thread1 = None
     thread2 = None
 
@@ -505,7 +492,7 @@ def main_menu(algo1, algo2):
         clock.tick(60)
 
 
-def loopSettings(sizeArray, inputRect, enter):
+def loopSettings(sizeArray, inputRect, enter, img1, img2, alg1, alg2):
     # fondo, texto de retorno al menu
     window.blit(background, (0, 0))
     escapeToGoBack = pygame.font.SysFont(
@@ -513,11 +500,11 @@ def loopSettings(sizeArray, inputRect, enter):
     window.blit(escapeToGoBack, (width//12.5, 75))
     # texto de tamaño de arreglo
     # tamaño normal de letra e indicaciones
-    base_font = pygame.font.SysFont(None, 35)
+    base_font = pygame.font.SysFont(None, 40)
     textoSizeArreglo = base_font.render('Tamaño de arreglo: ', True, white)
-    window.blit(textoSizeArreglo, (width//9.5, 150))
+    window.blit(textoSizeArreglo, (70, 200))
     textoIndicaciones = base_font.render('(Entre 5 y 40) ', True, white)
-    window.blit(textoIndicaciones, (width//1.6, 150))
+    window.blit(textoIndicaciones, (width//2 + 140, 200))
     # dibuja el input del texto dentro de la cajita
     textoTamanio = base_font.render(sizeArray, True, white)
     # si la cajita de input se selecciona, dibujarla y asignar el nuevo número
@@ -525,42 +512,65 @@ def loopSettings(sizeArray, inputRect, enter):
         pygame.draw.rect(window, white, inputRect, 2)
     window.blit(textoTamanio, (inputRect.x + 5, inputRect.y + 5))
 
-    """text_button_settings = pygame.font.SysFont(
-        None, 35).render('Tamaño de arreglo', True, white)
-    text_button_start = pygame.font.SysFont(
-        None, 35).render('Start', True, white)
-    # text = smallfont.render('start', True, white)
-    mx, my = pygame.mouse.get_pos()
-    settingButton = pygame.Rect(width//2.6, 75, 110, 30)
-    startButton = pygame.Rect(width//2.6, 135, 110, 30)
-    if settingButton.collidepoint((mx, my)):
-        if click:
-            alg1 = "hola"
+    # dibuja las imágenes de los algoritmos
+    pygame.draw.rect(window, white, pygame.Rect(
+        width//2 - 360 - 2, 290, 344, 220))
+    pygame.draw.rect(window, white, pygame.Rect(
+        width//2 + 20 - 2, 290, 344, 220))
+    window.blit(img1, (width//2 - 360, 300))
+    window.blit(img2, (width//2 + 20, 300))
 
-    pygame.draw.rect(window, (170, 0, 0), settingButton)
-    window.blit(text_button_settings, (width//2.5, 75))
-    pygame.draw.rect(window, (170, 0, 0), startButton)
-    window.blit(text_button_start, (width//2.5, 135))"""
+    # dibuja el texto de los algoritmos
+    window.blit(base_font.render(alg1, True, white), (width//2 - 290, 540))
+    window.blit(base_font.render(alg2, True, white), (width//2 + 90, 540))
+
+    # triángulos
+    triangle_vertices1 = [(40, 555), (70, 540), (70, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices1)
+    triangle_vertices2 = [(380, 555), (350, 540), (350, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices2)
+    triangle_vertices3 = [(420, 555), (450, 540), (450, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices3)
+    triangle_vertices4 = [(760, 555), (730, 540), (730, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices4)
 
 
 def settings():
+    images = loadImages()
     global killThread
     run = True
     alg1 = bogosort
     alg2 = quicksort
     textInput = "10"
     # dibuja rectángunlo de input de size del arreglo
-    inputRect = pygame.Rect(width//2.3, 150, 100, 32)
+    inputRect = pygame.Rect(width//2.2, 195, 100, 32)
     enter = False
-    loopSettings(textInput, inputRect, enter)
+    # cargar imagenes de algoritmos y crear variables del texto a mostrar
+    images = loadImages()
+    img1 = 0
+    img2 = 1
+    algTxt1 = "Insertion sort"
+    algTxt2 = "Selection sort"
+    loopSettings(textInput, inputRect, enter,
+                 images[img1], images[img2], algTxt1, algTxt2)
     active = False
+    changeButtons = []
+    changeButtons.append(pygame.Rect(40, 540, 30, 30))
+    changeButtons.append(pygame.Rect(350, 540, 30, 30))
+    changeButtons.append(pygame.Rect(420, 540, 30, 30))
+    changeButtons.append(pygame.Rect(730, 540, 30, 30))
     while run:
         for event in pygame.event.get():
             if (event.type == pygame.QUIT):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if inputRect.collidepoint(event.pos):
+                mx, my = pygame.mouse.get_pos()
+                changeAlg(mx, my, changeButtons, img1, img2, algTxt1, algTxt2)
+                if changeButtons[0].collidepoint((mx, my)) or changeButtons[1].collidepoint((mx, my)) or changeButtons[2].collidepoint((mx, my)) or changeButtons[3].collidepoint((mx, my)):
+                    img1, img2, algTxt1, algTxt2 = changeAlg(
+                        mx, my, changeButtons, img1, img2, algTxt1, algTxt2)
+                if inputRect.collidepoint((mx, my)):
                     active = True
                     enter = False
                 else:
@@ -581,14 +591,76 @@ def settings():
                         except ValueError:
                             textInput = "10"
                             print("Ingrese un número válido")
+                            enter = True
                     elif event.key == pygame.K_BACKSPACE:
                         textInput = textInput[:-1]
                     else:
                         textInput += event.unicode
-        loopSettings(textInput, inputRect, enter)
+        loopSettings(textInput, inputRect, enter,
+                     images[img1], images[img2], algTxt1, algTxt2)
         pygame.display.update()
         clock.tick(60)
     return alg1, alg2
+
+
+def changeAlg(mx, my, changeButtons, img1, img2, algTxt1, algTxt2):
+    nombres = ["Insertion Sort", "Selection Sort",
+               "Quick Sort", "Bubble Sort", "Bogo Sort", "Heap Sort", "Tree Sort", "Merge Sort"]
+    nNombres = len(nombres)
+    change = 0
+    if changeButtons[0].collidepoint((mx, my)):
+        if (img1 - 1) % nNombres != img2:
+            img1 = (img1 - 1) % nNombres
+        else:
+            img1 = (img1 - 2) % nNombres
+        change = 1
+    elif changeButtons[1].collidepoint((mx, my)):
+        if (img1 + 1) % nNombres != img2:
+            img1 = (img1 + 1) % nNombres
+        else:
+            img1 = (img1 + 2) % nNombres
+        change = 1
+    elif changeButtons[2].collidepoint((mx, my)):
+        if (img2 - 1) % nNombres != img1:
+            img2 = (img2 - 1) % nNombres
+        else:
+            img2 = (img2 - 2) % nNombres
+        change = 2
+    elif changeButtons[3].collidepoint((mx, my)):
+        if (img2 + 1) % nNombres != img1:
+            img2 = (img2 + 1) % nNombres
+        else:
+            img2 = (img2 + 2) % nNombres
+        change = 2
+
+    if change == 1:
+        algTxt1 = nombres[img1]
+    if change == 2:
+        algTxt2 = nombres[img2]
+    return img1, img2, algTxt1, algTxt2
+
+
+def loadImages():
+    width = 340
+    height = 200
+    images = []
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "insertion.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "selection.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "quick.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "bubble.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "bogo.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "heap.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "tree.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "merge.png")), (width, height)))
+    return images
 
 
 def main():
