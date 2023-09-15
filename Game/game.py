@@ -30,10 +30,45 @@ bar_area1 = pygame.Rect(width // 4, 190, 540, 220)
 # area 2
 bar_area2 = pygame.Rect(width//4, 440, 540, 220)
 
+def mergeSort(lista,bar_positions,bar_area):
+    if len(lista) == 1:
+        return lista
+
+    middle = len(lista)//2
+    left = lista[:middle]
+    right = lista[middle:]
+    l1 = mergeSort(left,bar_positions,bar_area)
+    l2 = mergeSort(right,bar_positions,bar_area)
+    return merge(l1, l2,bar_area,bar_positions)
+
+
+def merge(listaA, listaB,bar_area,bar_positions):
+    listaNueva = []
+    while len(listaA) > 0 and len(listaB) > 0:
+        if listaA[0] > listaB[0]:
+            listaNueva.append(listaB.pop(0))
+        else:
+            listaNueva.append(listaA.pop(0))
+     # Update bar_positions with new heights
+   
+    if len(listaA) > 0:
+        listaNueva.extend(listaA)
+    elif len(listaB) > 0:
+        listaNueva.extend(listaB)
+    bar_positions = updateBarPositions(listaNueva, bar_area)
+        # Redraw the screen to see changes reflected in bar_positions
+    if bar_area2 == bar_area:
+        drawBarsBox2(bar_positions, listaNueva)
+    elif bar_area1 == bar_area:
+        drawBarsBox1(bar_positions, listaNueva)
+    pygame.time.wait(400)  # delay of0.4 seconds
+    pygame.display.update()
+
+    return listaNueva
 
 class Node:
 
-    def __init__(self, data=0):
+    def __init__(self, data):
         # define left to none and right to none when initialize
         # set data to value received by object
         self.left = None
@@ -42,9 +77,14 @@ class Node:
 # insert in nodes
 
 
-def insertNodes(array, rootNode, bar_positions, bar_area):
+def insertNodes(array, bar_positions, bar_area):
     for i in range(len(array)):
-        insertCall(array[i], rootNode)
+        insertCall(array[i])
+    
+    final_array = []  # Initialize an empty final_array here
+    printTreeinOrder(rootNode, final_array, bar_positions, bar_area)
+
+    
 
 # printTree in Order, will print left farthest child will then go right recursively
 
@@ -56,7 +96,7 @@ def printTreeinOrder(node, final_array, bar_positions, bar_area):
         printTreeinOrder(node.left, final_array, bar_positions, bar_area)
         # go back and print node value
         final_array.append(node.data)
-        print("Treesort: "+str(final_array))
+       
         # Update bar_positions with new heights
         bar_positions = updateBarPositions(final_array, bar_area)
         # Redraw the screen to see changes reflected in bar_positions
@@ -80,20 +120,22 @@ def insertNode(node, data):
         return node
 
     # if value is smaller than current in node it will be assigned to left node recursively
-    if (data < node.data):
+    if (data <= node.data):
         node.left = insertNode(node.left, data)
 
     # if value is greater than current in node it will be assigned to left node recursively
-    elif (data > node.data):
+    elif (data >= node.data):
         node.right = insertNode(node.right, data)
 
     # recursion ends and node is inserted with data checked if smaller or greater than current
     return node
 
 
-def insertCall(data, rootNode):
+def insertCall(data):
 
-    rootNode = insertNode(rootNode, data)
+    global rootNode
+ 
+    rootNode= insertNode(rootNode, data)
 #
 
 
@@ -422,6 +464,8 @@ def main_menu(algo1, algo2):
     insertBars(num_bars)
     # draw all main_menu components
     drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2)
+    global rootNode
+    rootNode=None
 
     # create threads for sorting methods
     """bubblesort_thread = None
@@ -437,7 +481,7 @@ def main_menu(algo1, algo2):
 
     # rootNode started
 
-    rootNode = Node()
+   
     # set to none to have no children
 
     while True:
@@ -592,7 +636,7 @@ def settings():
 
 
 def main():
-    main_menu(quicksort, insertionSort)
+    main_menu(quicksort, bogosort)
 
 
 # run file if its main
