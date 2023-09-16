@@ -2,7 +2,6 @@ import pygame
 import random
 import os
 import sys
-import time
 import threading
 
 # initialize
@@ -11,9 +10,10 @@ pygame.init()
 width, height = 800, 700
 # window code to set display and caption
 window = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Space dodge")
+pygame.display.set_caption("Sort Royale")
 # image
-background = pygame.image.load("background.jpg").convert()
+background = pygame.image.load(os.path.join(
+    "assets", "background.jpg")).convert()
 background = pygame.transform.scale(background, (width, height))
 # RGB colors
 white = (255, 255, 255)
@@ -26,23 +26,45 @@ bar_array1 = []
 # array bars 2
 bar_array2 = []
 # area 1
-bar_area1 = pygame.Rect(width // 4, 190, 540, 220)
+bar_area1 = pygame.Rect(width//4, 190, 540, 220)
 # area 2
 bar_area2 = pygame.Rect(width//4, 440, 540, 220)
 
-def mergeSort(lista,bar_positions,bar_area):
+
+def selectionSort(lista, bar_positions, bar_area):
+    for i in range(0, len(lista) - 1):
+        minimum = lista[i]
+        swap = -1
+        for j in range(i + 1, len(lista)):
+            if minimum > lista[j]:
+                minimum = lista[j]
+                swap = j
+        if swap != -1:
+            lista[swap] = lista[i]
+            lista[i] = minimum
+            bar_positions = updateBarPositions(lista, bar_area)
+            # Redraw the screen to see changes reflected in bar_positions
+            if bar_area2 == bar_area:
+                drawBarsBox2(bar_positions, lista)
+            elif bar_area1 == bar_area:
+                drawBarsBox1(bar_positions, lista)
+            pygame.time.wait(400)  # delay of0.4 seconds
+            pygame.display.update()
+
+
+def mergeSort(lista, bar_positions, bar_area):
     if len(lista) == 1:
         return lista
 
     middle = len(lista)//2
     left = lista[:middle]
     right = lista[middle:]
-    l1 = mergeSort(left,bar_positions,bar_area)
-    l2 = mergeSort(right,bar_positions,bar_area)
-    return merge(l1, l2,bar_area,bar_positions)
+    l1 = mergeSort(left, bar_positions, bar_area)
+    l2 = mergeSort(right, bar_positions, bar_area)
+    return merge(l1, l2, bar_area, bar_positions)
 
 
-def merge(listaA, listaB,bar_area,bar_positions):
+def merge(listaA, listaB, bar_area, bar_positions):
     listaNueva = []
     while len(listaA) > 0 and len(listaB) > 0:
         if listaA[0] > listaB[0]:
@@ -50,21 +72,21 @@ def merge(listaA, listaB,bar_area,bar_positions):
         else:
             listaNueva.append(listaA.pop(0))
      # Update bar_positions with new heights
-   
+
     if len(listaA) > 0:
         listaNueva.extend(listaA)
     elif len(listaB) > 0:
         listaNueva.extend(listaB)
     bar_positions = updateBarPositions(listaNueva, bar_area)
-        # Redraw the screen to see changes reflected in bar_positions
+    # Redraw the screen to see changes reflected in bar_positions
     if bar_area2 == bar_area:
         drawBarsBox2(bar_positions, listaNueva)
     elif bar_area1 == bar_area:
         drawBarsBox1(bar_positions, listaNueva)
     pygame.time.wait(400)  # delay of0.4 seconds
     pygame.display.update()
-
     return listaNueva
+
 
 class Node:
 
@@ -80,11 +102,10 @@ class Node:
 def insertNodes(array, bar_positions, bar_area):
     for i in range(len(array)):
         insertCall(array[i])
-    
+
     final_array = []  # Initialize an empty final_array here
     printTreeinOrder(rootNode, final_array, bar_positions, bar_area)
 
-    
 
 # printTree in Order, will print left farthest child will then go right recursively
 
@@ -96,7 +117,7 @@ def printTreeinOrder(node, final_array, bar_positions, bar_area):
         printTreeinOrder(node.left, final_array, bar_positions, bar_area)
         # go back and print node value
         final_array.append(node.data)
-       
+
         # Update bar_positions with new heights
         bar_positions = updateBarPositions(final_array, bar_area)
         # Redraw the screen to see changes reflected in bar_positions
@@ -134,8 +155,8 @@ def insertNode(node, data):
 def insertCall(data):
 
     global rootNode
- 
-    rootNode= insertNode(rootNode, data)
+
+    rootNode = insertNode(rootNode, data)
 #
 
 
@@ -362,11 +383,7 @@ def updateBarPositions(bar_heights, reference_rect):
     return new_positions
 
 
-def clearScreen():
-    window.fill((255, 255, 255))
-
-
-def drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2):
+def drawSetup(alg1Txt, alg2Txt):
     window.blit(background, (0, 0))
     # Title object
     font = pygame.font.Font(None, 48)
@@ -386,52 +403,37 @@ def drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2):
     textTitleSurface2 = textTitle2.get_rect()
     # set coordinates for text
     textTitleSurface2.midtop = (width//4, 80)
-
     window.blit(textTitle2, textTitleSurface2)
 
     # Start game
-    font3 = pygame.font.Font(None, 35)
     # create text
-    textTitle3 = font3.render("Start Game:", True, white)
-    # create surface title
+    textTitle3 = font2.render("Start Game:", True, white)
+    # create surface title3
     textTitleSurface3 = textTitle3.get_rect()
     # set coordinates for text
     textTitleSurface3.midtop = (width//3.7, 140)
     window.blit(textTitle3, textTitleSurface3)
 
     # Sort1
-    font4 = pygame.font.Font(None, 35)
     # create text
-    textTitle4 = font4.render("Sort #1:", True, white)
-    # create surface title
-    textTitleSurface4 = textTitle4.get_rect()
-    # set coordinates for text
-    textTitleSurface4.midtop = (width//6, 300)
-    window.blit(textTitle4, textTitleSurface4)
+    textSort = font2.render("Sort:", True, white)
+    window.blit(textSort, (width//3 - 150, 310))
+    # txt algoritmo 1
+    txtoAlg1 = font2.render(alg1Txt, True, white)
+    window.blit(txtoAlg1, (65, 310 - 40))
 
     # Sort2
-    font5 = pygame.font.Font(None, 35)
     # create text
-    textTitle5 = font5.render("Sort #2:", True, white)
-    # create surface title
-    textTitleSurface5 = textTitle5.get_rect()
-    # set coordinates for text
-    textTitleSurface5.midtop = (width//6, 480)
-    window.blit(textTitle5, textTitleSurface5)
-    # button settings
-    # button colors
-    color_button = (170, 0, 0)
-
-    # button fonts
-    smallfont = pygame.font.SysFont(None, 35)
+    textTitle5 = font2.render("Sort:", True, white)
+    window.blit(textTitle5, (width//3 - 150, 560))
+    # txt Algoritmo 2
+    txtoAlg2 = font2.render(alg2Txt, True, white)
+    window.blit(txtoAlg2, (65, 560 - 40))
 
     # rendering text with different colors
-    text_button = smallfont.render('Change', True, white)
+    text_button = font2.render('Change', True, white)
     # pygame.draw.rect(window, color_button, [width//2.6, 75, 110, 30])
     window.blit(text_button, (width//2.5, 75))
-
-    # button fonts
-    smallfont = pygame.font.SysFont(None, 35)
 
     # draws rectangle 1
     pygame.draw.rect(window, white, [width//4, 190, 540, 220])
@@ -463,26 +465,17 @@ def main_menu(algo1, algo2):
     num_bars = 10
     insertBars(num_bars)
     # draw all main_menu components
-    drawSetup(bar_positions1, bar_array1, bar_positions2, bar_array2)
+    alg1Txt = "Quick"
+    alg2Txt = "Insertion"
+    drawSetup(alg1Txt, alg2Txt)
     global rootNode
-    rootNode=None
+    rootNode = None
 
     # create threads for sorting methods
-    """bubblesort_thread = None
-    quicksort_thread = None
-    bogosort_thread = None
-    heapsort_thread = None
-    insertion_sort = None"""
-
     thread1 = None
     thread2 = None
 
     startThread = True
-
-    # rootNode started
-
-   
-    # set to none to have no children
 
     while True:
         text_button_settings = pygame.font.SysFont(
@@ -496,7 +489,7 @@ def main_menu(algo1, algo2):
         if settingButton.collidepoint((mx, my)):
             if click:
                 killThread = True
-                alg1, alg2 = settings()
+                alg1, alg2, num_bars = settings(num_bars, alg1, alg2)
                 thread1 = None
                 thread2 = None
                 # insert random bars to arrays
@@ -504,8 +497,8 @@ def main_menu(algo1, algo2):
                 # insertBars1()
                 insertBars(num_bars)
                 # draw all main_menu components
-                drawSetup(bar_positions1, bar_array1,
-                          bar_positions2, bar_array2)
+                alg1Txt, alg2Txt = textoDeAlgoritmos(alg1, alg2)
+                drawSetup(alg1Txt, alg2Txt)
                 startThread = True
 
         thread1 = threading.Thread(
@@ -520,8 +513,6 @@ def main_menu(algo1, algo2):
                 pygame.display.update()
                 thread2.start()
                 pygame.display.update()
-                # thread3.join()
-                # printTreeinOrder(rootNode,bar_array1,bar_positions1,bar_area1)
 
                 if thread1.is_alive() == False and thread2.is_alive() == False:
                     startThread = True
@@ -549,7 +540,14 @@ def main_menu(algo1, algo2):
         clock.tick(60)
 
 
-def loopSettings(sizeArray, inputRect, enter):
+def textoDeAlgoritmos(alg1, alg2):
+    img1, img2, texto1, texto2 = selectAlgLastSettings(alg1, alg2)
+    txtAlg1 = texto1.split()
+    txtAlg2 = texto2.split()
+    return txtAlg1[0], txtAlg2[0]
+
+
+def loopSettings(sizeArray, inputRect, enter, img1, img2, alg1, alg2):
     # fondo, texto de retorno al menu
     window.blit(background, (0, 0))
     escapeToGoBack = pygame.font.SysFont(
@@ -557,11 +555,11 @@ def loopSettings(sizeArray, inputRect, enter):
     window.blit(escapeToGoBack, (width//12.5, 75))
     # texto de tamaño de arreglo
     # tamaño normal de letra e indicaciones
-    base_font = pygame.font.SysFont(None, 35)
+    base_font = pygame.font.SysFont(None, 40)
     textoSizeArreglo = base_font.render('Tamaño de arreglo: ', True, white)
-    window.blit(textoSizeArreglo, (width//9.5, 150))
-    textoIndicaciones = base_font.render('(Entre 5 y 40) ', True, white)
-    window.blit(textoIndicaciones, (width//1.6, 150))
+    window.blit(textoSizeArreglo, (70, 200))
+    textoIndicaciones = base_font.render('(Entre 5 y 35) ', True, white)
+    window.blit(textoIndicaciones, (width//2 + 140, 200))
     # dibuja el input del texto dentro de la cajita
     textoTamanio = base_font.render(sizeArray, True, white)
     # si la cajita de input se selecciona, dibujarla y asignar el nuevo número
@@ -569,74 +567,232 @@ def loopSettings(sizeArray, inputRect, enter):
         pygame.draw.rect(window, white, inputRect, 2)
     window.blit(textoTamanio, (inputRect.x + 5, inputRect.y + 5))
 
-    """text_button_settings = pygame.font.SysFont(
-        None, 35).render('Tamaño de arreglo', True, white)
-    text_button_start = pygame.font.SysFont(
-        None, 35).render('Start', True, white)
-    # text = smallfont.render('start', True, white)
-    mx, my = pygame.mouse.get_pos()
-    settingButton = pygame.Rect(width//2.6, 75, 110, 30)
-    startButton = pygame.Rect(width//2.6, 135, 110, 30)
-    if settingButton.collidepoint((mx, my)):
-        if click:
-            alg1 = "hola"
+    # dibuja las imágenes de los algoritmos
+    pygame.draw.rect(window, white, pygame.Rect(
+        width//2 - 360 - 2, 290, 344, 220))
+    pygame.draw.rect(window, white, pygame.Rect(
+        width//2 + 20 - 2, 290, 344, 220))
+    window.blit(img1, (width//2 - 360, 300))
+    window.blit(img2, (width//2 + 20, 300))
 
-    pygame.draw.rect(window, (170, 0, 0), settingButton)
-    window.blit(text_button_settings, (width//2.5, 75))
-    pygame.draw.rect(window, (170, 0, 0), startButton)
-    window.blit(text_button_start, (width//2.5, 135))"""
+    # dibuja el texto de los algoritmos
+    window.blit(base_font.render(alg1, True, white), (width//2 - 290, 540))
+    window.blit(base_font.render(alg2, True, white), (width//2 + 90, 540))
+
+    # triángulos
+    triangle_vertices1 = [(40, 555), (70, 540), (70, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices1)
+    triangle_vertices2 = [(380, 555), (350, 540), (350, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices2)
+    triangle_vertices3 = [(420, 555), (450, 540), (450, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices3)
+    triangle_vertices4 = [(760, 555), (730, 540), (730, 570)]
+    pygame.draw.polygon(window, white, triangle_vertices4)
 
 
-def settings():
+def settings(size, algo1, algo2):
+    images = loadImages()
     global killThread
     run = True
-    alg1 = bogosort
-    alg2 = quicksort
-    textInput = "10"
+    alg1 = algo1
+    alg2 = algo2
+    textInput = str(size)
+    temp = str(size)
     # dibuja rectángunlo de input de size del arreglo
-    inputRect = pygame.Rect(width//2.3, 150, 100, 32)
+    inputRect = pygame.Rect(width//2.2, 195, 100, 32)
     enter = False
-    loopSettings(textInput, inputRect, enter)
+    # cargar imagenes de algoritmos y crear variables del texto a mostrar
+    images = loadImages()
+    # obtiene los nombres e imagenes de la última configuración
+    img1, img2, algTxt1, algTxt2 = selectAlgLastSettings(alg1, alg2)
+
+    loopSettings(textInput, inputRect, enter,
+                 images[img1], images[img2], algTxt1, algTxt2)
     active = False
+    changeButtons = []
+    changeButtons.append(pygame.Rect(40, 540, 30, 30))
+    changeButtons.append(pygame.Rect(350, 540, 30, 30))
+    changeButtons.append(pygame.Rect(420, 540, 30, 30))
+    changeButtons.append(pygame.Rect(730, 540, 30, 30))
     while run:
         for event in pygame.event.get():
             if (event.type == pygame.QUIT):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if inputRect.collidepoint(event.pos):
+                mx, my = pygame.mouse.get_pos()
+                changeAlg(mx, my, changeButtons, img1, img2, algTxt1, algTxt2)
+                if changeButtons[0].collidepoint((mx, my)) or changeButtons[1].collidepoint((mx, my)) or changeButtons[2].collidepoint((mx, my)) or changeButtons[3].collidepoint((mx, my)):
+                    img1, img2, algTxt1, algTxt2 = changeAlg(
+                        mx, my, changeButtons, img1, img2, algTxt1, algTxt2)
+                if inputRect.collidepoint((mx, my)):
                     active = True
                     enter = False
                 else:
+                    try:
+                        sizeArray = int(textInput)
+                        if sizeArray < 5 or sizeArray > 35:
+                            textInput = temp
+                    except ValueError:
+                        textInput = temp
+                        print("Ingrese un número válido")
                     active = False
                     enter = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     killThread = False
+                    alg1, alg2 = nuevosAlgoritmos(img1, img2)
+                    try:
+                        sizeArray = int(textInput)
+                        if sizeArray < 5 or sizeArray > 40:
+                            textInput = temp
+                    except ValueError:
+                        textInput = temp
+                    active = False
                 if active:
                     if event.key == pygame.K_RETURN:
                         try:
                             sizeArray = int(textInput)
                             if sizeArray < 5 or sizeArray > 40:
-                                textInput = "10"
-                            enter = True
-                            active = False
+                                textInput = temp
+                            else:
+                                enter = True
+                                active = False
                         except ValueError:
-                            textInput = "10"
+                            textInput = temp
                             print("Ingrese un número válido")
+                            enter = True
                     elif event.key == pygame.K_BACKSPACE:
                         textInput = textInput[:-1]
                     else:
                         textInput += event.unicode
-        loopSettings(textInput, inputRect, enter)
+        loopSettings(textInput, inputRect, enter,
+                     images[img1], images[img2], algTxt1, algTxt2)
         pygame.display.update()
         clock.tick(60)
-    return alg1, alg2
+    return alg1, alg2, int(textInput)
+
+
+# retorna los nuevos algoritmos de las configuraciones
+def nuevosAlgoritmos(img1, img2):
+    images = [img1, img2]
+    algoritmos = []
+    for img in images:
+        if img == 0:
+            algoritmos.append(insertionSort)
+        elif img == 1:
+            algoritmos.append(selectionSort)
+        elif img == 2:
+            algoritmos.append(quicksort)
+        elif img == 3:
+            algoritmos.append(bubblesort)
+        elif img == 4:
+            algoritmos.append(bogosort)
+        elif img == 5:
+            algoritmos.append(heapsort)
+        elif img == 6:
+            algoritmos.append(insertNodes)
+        elif img == 7:
+            algoritmos.append(mergeSort)
+    return algoritmos[0], algoritmos[1]
+
+
+# selecciona los algoritmos de la configuración actual
+def selectAlgLastSettings(alg1, alg2):
+    algorithms = [alg1, alg2]
+    images = []
+    algTxts = []
+    for alg in algorithms:
+        if alg == insertionSort:
+            images.append(0)
+            algTxts.append("Insertion Sort")
+        elif alg == selectionSort:
+            images.append(1)
+            algTxts.append("Selection Sort")
+        elif alg == quicksort:
+            images.append(2)
+            algTxts.append("Quick Sort")
+        elif alg == bubblesort:
+            images.append(3)
+            algTxts.append("Bubble Sort")
+        elif alg == bogosort:
+            images.append(4)
+            algTxts.append("Bogo Sort")
+        elif alg == heapsort:
+            images.append(5)
+            algTxts.append("Heap Sort")
+        elif alg == insertNodes:
+            images.append(6)
+            algTxts.append("Tree Sort")
+        elif alg == mergeSort:
+            images.append(7)
+            algTxts.append("Merge Sort")
+    return images[0], images[1], algTxts[0], algTxts[1]
+
+
+def changeAlg(mx, my, changeButtons, img1, img2, algTxt1, algTxt2):
+    nombres = ["Insertion Sort", "Selection Sort", "Quick Sort",
+               "Bubble Sort", "Bogo Sort", "Heap Sort", "Tree Sort", "Merge Sort"]
+    nNombres = len(nombres)
+    change = 0
+    if changeButtons[0].collidepoint((mx, my)):
+        if (img1 - 1) % nNombres != img2:
+            img1 = (img1 - 1) % nNombres
+        else:
+            img1 = (img1 - 2) % nNombres
+        change = 1
+    elif changeButtons[1].collidepoint((mx, my)):
+        if (img1 + 1) % nNombres != img2:
+            img1 = (img1 + 1) % nNombres
+        else:
+            img1 = (img1 + 2) % nNombres
+        change = 1
+    elif changeButtons[2].collidepoint((mx, my)):
+        if (img2 - 1) % nNombres != img1:
+            img2 = (img2 - 1) % nNombres
+        else:
+            img2 = (img2 - 2) % nNombres
+        change = 2
+    elif changeButtons[3].collidepoint((mx, my)):
+        if (img2 + 1) % nNombres != img1:
+            img2 = (img2 + 1) % nNombres
+        else:
+            img2 = (img2 + 2) % nNombres
+        change = 2
+
+    if change == 1:
+        algTxt1 = nombres[img1]
+    if change == 2:
+        algTxt2 = nombres[img2]
+    return img1, img2, algTxt1, algTxt2
+
+
+def loadImages():
+    width = 340
+    height = 200
+    images = []
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "insertion.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "selection.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "quick.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "bubble.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "bogo.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "heap.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "tree.png")), (width, height)))
+    images.append(pygame.transform.scale(pygame.image.load(
+        os.path.join("assets", "merge.png")), (width, height)))
+    return images
 
 
 def main():
-    main_menu(quicksort, bogosort)
+    main_menu(quicksort, insertionSort)
 
 
 # run file if its main
