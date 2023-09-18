@@ -769,35 +769,47 @@ def winnerWindow(winner, loser, timeW, timeL, alg1, alg2, num_bars):
 
     click = False
     showed_winner = False
-    img_winner = pygame.image.load(os.path.join("assets", "winner.png"))
+    img_winner = pygame.image.load(os.path.join("assets", "winnerT.png"))
+    img_winner = pygame.transform.scale(
+        img_winner, (int(img_winner.get_width()), int(img_winner.get_height()))
+    )
     font = pygame.font.SysFont(None, 48)
+    font2 = pygame.font.SysFont(None, 40)
 
-    waiting = True  # Set waiting to True only here
+    waiting = True  # waiting is truee just here
 
     while waiting:
         # Limpiar pantalla
         window.blit(background, (0, 0))
-
         # Preparar textos
-        title = font.render("GAME OVER", True, white)
-        winner_text = font.render(f"Winner: {winner}", True, white)
+        title = font.render("¡GAME OVER!", True, white)
+        winner_text = font2.render(f"Winner: {winner}", True, white)
         tw = round(timeW, 2)
-        winner_time_text = font.render(f"Time Winner: {tw}", True, white)
-        loser_text = font.render(f"Loser: {loser}", True, white)
+        winner_time_text = font2.render(f"Time Winner: {tw} sec", True, white)
+        loser_text = font2.render(f"Loser: {loser}", True, white)
         tl = round(timeL, 2)
-        loser_time_text = font.render(f"Time Loser: {tl}", True, white)
+        loser_time_text = font2.render(f"Time Loser: {tl} sec", True, white)
         diff = timeL - timeW
         td = round(diff, 2)
-        diff_text = font.render(f"Time Difference: {td}", True, white)
-
+        diff_text = font2.render(f"Time Difference: {td} sec", True, white)
+        return_text = font.render(f"Press ESC to return to main menu", True, white)
         # Mostrar en pantalla
         window.blit(title, (width / 2 - title.get_width() / 2, 20))
-        window.blit(img_winner, (width / 2 - img_winner.get_width() / 2, 200))
-        window.blit(winner_text, (100, 300))
-        window.blit(winner_time_text, (100, 350))
-        window.blit(loser_text, (100, 400))
-        window.blit(loser_time_text, (100, 450))
-        window.blit(diff_text, (100, 500))
+        window.blit(img_winner, (width / 2 - img_winner.get_width() / 2, 28))
+        x = (
+            width / 2
+            - max(
+                winner_text.get_width(), loser_text.get_width(), diff_text.get_width()
+            )
+            / 2
+        )
+        y = 370
+        window.blit(winner_text, (x, y))
+        window.blit(winner_time_text, (x, y + 50))
+        window.blit(loser_text, (x, y + 100))
+        window.blit(loser_time_text, (x, y + 150))
+        window.blit(diff_text, (x, y + 200))
+        window.blit(return_text,(width / 2 - return_text.get_width() / 2, y + 270))
 
         pygame.display.update()
 
