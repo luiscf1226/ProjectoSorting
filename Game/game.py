@@ -63,7 +63,7 @@ def selectionSort(lista, bar_positions, bar_area):
                 drawBarsBox2(bar_positions, lista)
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, lista)
-            pygame.time.wait(400)  # delay of0.4 seconds
+            pygame.time.wait(200)  # delay of0.4 seconds
             pygame.display.update()
     if bar_area2 == bar_area:
         global end_time2
@@ -131,7 +131,7 @@ def merge(listaA, listaB, bar_area, bar_positions):
     elif bar_area1 == bar_area:
         drawBarsBox1(bar_positions, listaNueva)
 
-    pygame.time.wait(400)  # delay of0.4 seconds
+    pygame.time.wait(200)  # delay of0.4 seconds
     pygame.display.update()
     return listaNueva
 
@@ -192,7 +192,7 @@ def printTreeinOrder(node, final_array, bar_positions, bar_area):
             drawBarsBox2(bar_positions, final_array)
         elif bar_area1 == bar_area:
             drawBarsBox1(bar_positions, final_array)
-        pygame.time.wait(400)  # delay of0.4 seconds
+        pygame.time.wait(200)  # delay of0.4 seconds
         pygame.display.update()
 
         # visit right child
@@ -247,7 +247,7 @@ def insertionSort(lista, bar_positions, bar_area):
                     drawBarsBox2(bar_positions, lista)
                 elif bar_area1 == bar_area:
                     drawBarsBox1(bar_positions, lista)
-            pygame.time.wait(400)  # delay of0.4 seconds
+            pygame.time.wait(200)  # delay of0.4 seconds
     if bar_area2 == bar_area:
         global end_time2
         end_time2 = time.time()
@@ -317,7 +317,7 @@ def heapsort(random_numbers, bar_positions, bar_area):
             drawBarsBox2(bar_positions, random_numbers)
         elif bar_area1 == bar_area:
             drawBarsBox1(bar_positions, random_numbers)
-        pygame.time.wait(400)  # delay of0.4 seconds
+        pygame.time.wait(200)  # delay of0.4 seconds
     if bar_area2 == bar_area:
         global end_time2
         end_time2 = time.time()
@@ -366,7 +366,7 @@ def bogosort(random_numbers, bar_positions, bar_area):
                 drawBarsBox2(bar_positions, random_numbers)
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, random_numbers)
-            pygame.time.wait(400)  # delay of0.4 seconds
+            pygame.time.wait(200)  # delay of0.4 seconds
     if bar_area2 == bar_area:
         global end_time2
         end_time2 = time.time()
@@ -431,7 +431,7 @@ def quicksort(arr, bar_positions, bar_area):
                 drawBarsBox2(bar_positions, result)
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, result)
-            pygame.time.wait(400)  # delay of 0.5 seconds
+            pygame.time.wait(200)  # delay of 0.5 seconds
     if bar_area2 == bar_area:
         global end_time2
         end_time2 = time.time()
@@ -476,7 +476,7 @@ def bubblesort(random_numbers, bar_positions, bar_area):
                 elif bar_area1 == bar_area:
                     drawBarsBox1(bar_positions, random_numbers)
 
-                pygame.time.wait(400)  # delay of0.4 seconds
+                pygame.time.wait(200)  # delay of0.4 seconds
     if bar_area2 == bar_area:
         global end_time2
         end_time2 = time.time()
@@ -631,7 +631,7 @@ def main_menu(algo1, algo2):
     insertBars(num_bars)
     # draw all main_menu components
     alg1Txt = "Quick"
-    alg2Txt = "Insertion"
+    alg2Txt = "Tree"
     drawSetup(alg1Txt, alg2Txt)
     global rootNode
     rootNode = None
@@ -724,8 +724,8 @@ def main_menu(algo1, algo2):
                 winnerWindow(
                     winner_name,
                     loser_name,
-                    thread2_time,
                     thread1_time,
+                    thread2_time,
                     alg1,
                     alg2,
                     num_bars,
@@ -745,7 +745,7 @@ def main_menu(algo1, algo2):
                     1
                 ]  # Fixing an apparent mistake where you fetched the winner_name twice
                 clearArrays()
-                
+
                 pygame.display.update()
                 winnerWindow(
                     winner_name,
