@@ -740,10 +740,8 @@ def main_menu(algo1, algo2):
                 and not thread2.is_alive()
                 and not showedWinner
             ):
-                winner_name = textoDeAlgoritmos(alg1, alg2)[0]
-                loser_name = textoDeAlgoritmos(alg1, alg2)[
-                    1
-                ]  # Fixing an apparent mistake where you fetched the winner_name twice
+                winner_name = textoDeAlgoritmos(alg1, alg2)[1]
+                loser_name = textoDeAlgoritmos(alg1, alg2)[0]
                 clearArrays()
 
                 pygame.display.update()
