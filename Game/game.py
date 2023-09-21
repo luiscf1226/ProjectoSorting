@@ -16,7 +16,8 @@ width, height = 800, 700
 window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Sort Royale")
 # image
-background = pygame.image.load(os.path.join("assets", "background.jpg")).convert()
+background = pygame.image.load(os.path.join(
+    "assets", "background.jpg")).convert()
 background = pygame.transform.scale(background, (width, height))
 # RGB colors
 white = (255, 255, 255)
@@ -43,17 +44,16 @@ def selectionSort(lista, bar_positions, bar_area):
             if minimum > lista[j]:
                 minimum = lista[j]
                 swap = j
+            pygame.time.wait(200)  # delay of 0.2 seconds
         if swap != -1:
-            lista[swap], lista[i] = lista[i], minimum  
+            lista[swap], lista[i] = lista[i], minimum
             bar_positions = updateBarPositions(lista, bar_area)
             # Redraw the screen to see changes reflected in bar_positions
             if bar_area2 == bar_area:
                 drawBarsBox2(bar_positions, lista)
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, lista)
-            pygame.time.wait(200)  # delay of 0.2 seconds
             pygame.display.update()
-  
 
 
 def mergeSort(lista, bar_positions, bar_area):
@@ -66,7 +66,7 @@ def mergeSort(lista, bar_positions, bar_area):
     right = lista[middle:]
     l1 = mergeSort(left, bar_positions, bar_area)
     l2 = mergeSort(right, bar_positions, bar_area)
-   
+
     return merge(l1, l2, bar_area, bar_positions)
 
 
@@ -114,7 +114,7 @@ def insertNodes(array, bar_positions, bar_area):
 
     final_array = []  # Initialize an empty final_array here
     printTreeinOrder(rootNode, final_array, bar_positions, bar_area)
-    
+
 
 # printTree in Order, will print left farthest child will then go right recursively
 
@@ -184,7 +184,6 @@ def insertionSort(lista, bar_positions, bar_area):
                 elif bar_area1 == bar_area:
                     drawBarsBox1(bar_positions, lista)
             pygame.time.wait(200)  # delay of0.4 seconds
-   
 
 
 def heapify(random_numbers, n, i):
@@ -237,7 +236,7 @@ def heapsort(random_numbers, bar_positions, bar_area):
         elif bar_area1 == bar_area:
             drawBarsBox1(bar_positions, random_numbers)
         pygame.time.wait(200)  # delay of0.4 seconds
-   
+
     return random_numbers
 
 
@@ -269,7 +268,7 @@ def bogosort(random_numbers, bar_positions, bar_area):
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, random_numbers)
             pygame.time.wait(200)  # delay of0.4 seconds
-    
+
     return random_numbers
 
 
@@ -317,7 +316,7 @@ def quicksort(arr, bar_positions, bar_area):
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, result)
             pygame.time.wait(200)  # delay of 0.5 seconds
-   
+
     return result
 
 
@@ -345,7 +344,6 @@ def bubblesort(random_numbers, bar_positions, bar_area):
                     drawBarsBox1(bar_positions, random_numbers)
 
                 pygame.time.wait(200)  # delay of0.4 seconds
-    
 
 
 def drawBarsBox1(bar_positions, bar_heights):
@@ -354,7 +352,8 @@ def drawBarsBox1(bar_positions, bar_heights):
     bar_width = 10
     # gets x,y coordinates and height to be drawn from bars arrays
     for (bar_x, bar_y), bar_height in zip(bar_positions, bar_heights):
-        pygame.draw.rect(window, color_red, [bar_x, bar_y, bar_width, bar_height])
+        pygame.draw.rect(window, color_red, [
+                         bar_x, bar_y, bar_width, bar_height])
     pygame.display.update()
 
 
@@ -364,7 +363,8 @@ def drawBarsBox2(bar_positions2, bar_heights2):
     bar_width = 10
     # gets x,y coordinates and height to be drawn from bars arrays
     for (bar_x, bar_y), bar_height in zip(bar_positions2, bar_heights2):
-        pygame.draw.rect(window, color_red, [bar_x, bar_y, bar_width, bar_height])
+        pygame.draw.rect(window, color_red, [
+                         bar_x, bar_y, bar_width, bar_height])
     pygame.display.update()
 
 
@@ -477,17 +477,16 @@ def clearArrays():
     bar_array2.clear()
 
 
-def main_menu(algo1, algo2):
+def main_menu(numBars, algo1, algo2):
     alg1 = algo1
     alg2 = algo2
     global killThread
     showedWinner = False
     # insert random bars to arrays
-    num_bars = 10
+    num_bars = numBars
     insertBars(num_bars)
     # draw all main_menu components
-    alg1Txt = "Quick"
-    alg2Txt = "Tree"
+    alg1Txt, alg2Txt = textoDeAlgoritmos(alg1, alg2)
     drawSetup(alg1Txt, alg2Txt)
     global rootNode
     rootNode = None
@@ -498,12 +497,11 @@ def main_menu(algo1, algo2):
     click = False
     startThread = True
     showed_winner = False
-    start_time1=0
-    start_time2=0
+    start_time1 = 0
+    start_time2 = 0
 
-    end_time1=0
-    end_time2=0
-
+    end_time1 = 0
+    end_time2 = 0
 
     thread1_time = 0
     thread2_time = 0
@@ -511,7 +509,8 @@ def main_menu(algo1, algo2):
         text_button_settings = pygame.font.SysFont(None, 35).render(
             "Change", True, white
         )
-        text_button_start = pygame.font.SysFont(None, 35).render("Start", True, white)
+        text_button_start = pygame.font.SysFont(
+            None, 35).render("Start", True, white)
         # text = smallfont.render('start', True, white)
         mx, my = pygame.mouse.get_pos()
         settingButton = pygame.Rect(width // 2.6, 75, 110, 30)
@@ -545,45 +544,41 @@ def main_menu(algo1, algo2):
                     daemon=True,
                 )
                 startThread = False
-                
-                
+
                 thread1.start()
                 thread2.start()
                 pygame.display.update()
-                start_time1=time.time()
-                start_time2=time.time()
+                start_time1 = time.time()
+                start_time2 = time.time()
 
                 start_event.set()
-              
 
                 if thread1.is_alive() == False and thread2.is_alive() == False:
-                    startThread = True 
+                    startThread = True
                 while thread1.is_alive() or thread2.is_alive():
                     if thread1.is_alive():
                         thread1.join(0.1)
-                        end_time1=time.time()
+                        end_time1 = time.time()
                     if thread2.is_alive():
                         thread2.join(0.1)
-                        end_time2=time.time()
-               
-               
-              
-                print("Alg1 time: ",(end_time1-start_time1))
-                print("Alg2 time: ",(end_time2-start_time2))
+                        end_time2 = time.time()
+
+                """print("Alg1 time: ", (end_time1-start_time1))
+                print("Alg2 time: ", (end_time2-start_time2))"""
         pygame.draw.rect(window, (170, 0, 0), settingButton)
         window.blit(text_button_settings, (width // 2.5, 75))
         pygame.draw.rect(window, (170, 0, 0), startButton)
         window.blit(text_button_start, (width // 2.5, 135))
 
         click = False
-        for event in pygame.event.get ():
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
-        
+
         thread1_time_final = end_time1-start_time1
         thread3_time_final = end_time2-start_time2
         if (
@@ -635,7 +630,7 @@ def main_menu(algo1, algo2):
                     alg2,
                     num_bars,
                 )
-            
+
                 showedWinner = True
 
                 pygame.display.update()
@@ -691,7 +686,8 @@ def winnerWindow(winner, loser, timeW, timeL, alg1, alg2, num_bars):
         diff = timeL - timeW
         td = round(diff, 2)
         diff_text = font2.render(f"Time Difference: {td} sec", True, white)
-        return_text = font.render(f"Press ESC to return to main menu", True, white)
+        return_text = font.render(
+            f"Press ESC to return to main menu", True, white)
         # Mostrar en pantalla
         window.blit(title, (width / 2 - title.get_width() / 2, 20))
         window.blit(img_winner, (width / 2 - img_winner.get_width() / 2, 28))
@@ -708,7 +704,8 @@ def winnerWindow(winner, loser, timeW, timeL, alg1, alg2, num_bars):
         window.blit(loser_text, (x, y + 100))
         window.blit(loser_time_text, (x, y + 150))
         window.blit(diff_text, (x, y + 200))
-        window.blit(return_text,(width / 2 - return_text.get_width() / 2, y + 270))
+        window.blit(return_text, (width / 2 -
+                    return_text.get_width() / 2, y + 270))
 
         pygame.display.update()
 
@@ -719,7 +716,7 @@ def winnerWindow(winner, loser, timeW, timeL, alg1, alg2, num_bars):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     waiting = False
-                    main_menu(quicksort, insertNodes)
+                    main_menu(num_bars, alg1, alg2)
                     pygame.display.update()
                     clearArrays()
                     break  # Exit the while loop
@@ -744,10 +741,13 @@ def tiedWindow(winner, loser, timeW, alg1, alg2, num_bars):
         window.blit(background, (0, 0))
         # Preparar textos
         title = font.render("¡GAME OVER!", True, white)
-        text = font.render(f"El {winner} y el {loser} han empatado!", True, white)
+        text = font.render(
+            f"El {winner} y el {loser} han empatado!", True, white)
         tw = round(timeW, 2)
-        winner_time_text = font2.render(f"Con un tiempo de: {tw} sec", True, white)
-        return_text = font.render(f"Press ESC to return to main menu", True, white)
+        winner_time_text = font2.render(
+            f"Con un tiempo de: {tw} sec", True, white)
+        return_text = font.render(
+            f"Press ESC to return to main menu", True, white)
         # Mostrar en pantalla
         window.blit(title, (width / 2 - title.get_width() / 2, 20))
         window.blit(img_winner, (width / 2 - img_winner.get_width() / 2, 28))
@@ -761,8 +761,8 @@ def tiedWindow(winner, loser, timeW, alg1, alg2, num_bars):
         y = 370
         window.blit(text, (x, y))
         window.blit(winner_time_text, (x, y + 50))
-        window.blit(return_text, (x, y + 120)) 
-        
+        window.blit(return_text, (x, y + 120))
+
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -772,10 +772,11 @@ def tiedWindow(winner, loser, timeW, alg1, alg2, num_bars):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     waiting = False
-                    main_menu(quicksort, insertNodes)
+                    main_menu(num_bars, alg1, alg2)
                     pygame.display.update()
                     clearArrays()
                     break  # Exit the while loop
+
 
 def textoDeAlgoritmos(alg1, alg2):
     img1, img2, texto1, texto2 = selectAlgLastSettings(alg1, alg2)
@@ -806,8 +807,10 @@ def loopSettings(sizeArray, inputRect, enter, img1, img2, alg1, alg2):
     window.blit(textoTamanio, (inputRect.x + 5, inputRect.y + 5))
 
     # dibuja las imágenes de los algoritmos
-    pygame.draw.rect(window, white, pygame.Rect(width // 2 - 360 - 2, 290, 344, 220))
-    pygame.draw.rect(window, white, pygame.Rect(width // 2 + 20 - 2, 290, 344, 220))
+    pygame.draw.rect(window, white, pygame.Rect(
+        width // 2 - 360 - 2, 290, 344, 220))
+    pygame.draw.rect(window, white, pygame.Rect(
+        width // 2 + 20 - 2, 290, 344, 220))
     window.blit(img1, (width // 2 - 360, 300))
     window.blit(img2, (width // 2 + 20, 300))
 
@@ -1026,49 +1029,57 @@ def loadImages():
     images = []
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "insertion.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "insertion.png")), (width, height)
         )
     )
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "selection.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "selection.png")), (width, height)
         )
     )
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "quick.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "quick.png")), (width, height)
         )
     )
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "bubble.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "bubble.png")), (width, height)
         )
     )
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "bogo.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "bogo.png")), (width, height)
         )
     )
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "heap.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "heap.png")), (width, height)
         )
     )
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "tree.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "tree.png")), (width, height)
         )
     )
     images.append(
         pygame.transform.scale(
-            pygame.image.load(os.path.join("assets", "merge.png")), (width, height)
+            pygame.image.load(os.path.join(
+                "assets", "merge.png")), (width, height)
         )
     )
     return images
 
 
 def main():
-    main_menu(quicksort, insertNodes)
+    main_menu(10, quicksort, insertNodes)
 
 
 # run file if its main
