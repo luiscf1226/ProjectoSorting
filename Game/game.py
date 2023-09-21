@@ -5,14 +5,8 @@ import sys
 import threading
 import time
 
-global start_time1
-global start_time2
-
-global end_time1
-global end_time2
-
-thread1_time = 0
-thread2_time = 0
+global start_event
+start_event = threading.Event()
 
 # initialize
 pygame.init()
@@ -41,12 +35,7 @@ bar_area2 = pygame.Rect(width // 4, 440, 540, 220)
 
 
 def selectionSort(lista, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     for i in range(0, len(lista) - 1):
         minimum = lista[i]
         swap = -1
@@ -55,38 +44,20 @@ def selectionSort(lista, bar_positions, bar_area):
                 minimum = lista[j]
                 swap = j
         if swap != -1:
-            lista[swap] = lista[i]
-            lista[i] = minimum
+            lista[swap], lista[i] = lista[i], minimum  
             bar_positions = updateBarPositions(lista, bar_area)
             # Redraw the screen to see changes reflected in bar_positions
             if bar_area2 == bar_area:
                 drawBarsBox2(bar_positions, lista)
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, lista)
-            pygame.time.wait(200)  # delay of0.4 seconds
+            pygame.time.wait(200)  # delay of 0.2 seconds
             pygame.display.update()
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
+  
 
 
 def mergeSort(lista, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     if len(lista) == 1:
         return lista
 
@@ -95,19 +66,7 @@ def mergeSort(lista, bar_positions, bar_area):
     right = lista[middle:]
     l1 = mergeSort(left, bar_positions, bar_area)
     l2 = mergeSort(right, bar_positions, bar_area)
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
+   
     return merge(l1, l2, bar_area, bar_positions)
 
 
@@ -149,31 +108,13 @@ class Node:
 
 
 def insertNodes(array, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     for i in range(len(array)):
         insertCall(array[i])
 
     final_array = []  # Initialize an empty final_array here
     printTreeinOrder(rootNode, final_array, bar_positions, bar_area)
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
-
+    
 
 # printTree in Order, will print left farthest child will then go right recursively
 
@@ -228,12 +169,7 @@ def insertCall(data):
 
 
 def insertionSort(lista, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     for i in range(1, len(lista)):
         key = lista[i]
         for j in range(i - 1, -1, -1):
@@ -248,19 +184,7 @@ def insertionSort(lista, bar_positions, bar_area):
                 elif bar_area1 == bar_area:
                     drawBarsBox1(bar_positions, lista)
             pygame.time.wait(200)  # delay of0.4 seconds
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
+   
 
 
 def heapify(random_numbers, n, i):
@@ -292,12 +216,7 @@ def heapify(random_numbers, n, i):
 
 
 def heapsort(random_numbers, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     n = len(random_numbers)
     # iterates the array from the end to the begining
     for i in range(n, -1, -1):
@@ -318,19 +237,7 @@ def heapsort(random_numbers, bar_positions, bar_area):
         elif bar_area1 == bar_area:
             drawBarsBox1(bar_positions, random_numbers)
         pygame.time.wait(200)  # delay of0.4 seconds
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
+   
     return random_numbers
 
 
@@ -348,12 +255,7 @@ def is_sorted(arr):
 
 
 def bogosort(random_numbers, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     while not is_sorted(random_numbers):
         if killThread:
             return
@@ -367,29 +269,12 @@ def bogosort(random_numbers, bar_positions, bar_area):
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, random_numbers)
             pygame.time.wait(200)  # delay of0.4 seconds
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
+    
     return random_numbers
 
 
 def quicksort(arr, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     if killThread:
         return []  # raise Exception("Terminar función recursiva")
     else:
@@ -432,29 +317,12 @@ def quicksort(arr, bar_positions, bar_area):
             elif bar_area1 == bar_area:
                 drawBarsBox1(bar_positions, result)
             pygame.time.wait(200)  # delay of 0.5 seconds
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
+   
     return result
 
 
 def bubblesort(random_numbers, bar_positions, bar_area):
-    if bar_area2 == bar_area:
-        global start_time2
-        start_time2 = time.time()
-    elif bar_area1 == bar_area:
-        global start_time1
-        start_time1 = time.time()
+    start_event.wait()
     n = len(random_numbers)
     for i in range(n):
         for j in range(0, n - i - 1):
@@ -477,19 +345,7 @@ def bubblesort(random_numbers, bar_positions, bar_area):
                     drawBarsBox1(bar_positions, random_numbers)
 
                 pygame.time.wait(200)  # delay of0.4 seconds
-    if bar_area2 == bar_area:
-        global end_time2
-        end_time2 = time.time()
-        global thread2_time
-        thread2_time = end_time2 - start_time2
-        print(f"Time taken by the algorithm: {thread2_time} seconds")
-
-    elif bar_area1 == bar_area:
-        global end_time1
-        end_time1 = time.time()
-        global thread1_time
-        thread1_time = end_time1 - start_time1
-        print(f"Time taken by the algorithm: {thread1_time} seconds")
+    
 
 
 def drawBarsBox1(bar_positions, bar_heights):
@@ -642,6 +498,15 @@ def main_menu(algo1, algo2):
     click = False
     startThread = True
     showed_winner = False
+    start_time1=0
+    start_time2=0
+
+    end_time1=0
+    end_time2=0
+
+
+    thread1_time = 0
+    thread2_time = 0
     while True:
         text_button_settings = pygame.font.SysFont(None, 35).render(
             "Change", True, white
@@ -680,31 +545,47 @@ def main_menu(algo1, algo2):
                     daemon=True,
                 )
                 startThread = False
+                
+                
                 thread1.start()
-                pygame.display.update()
                 thread2.start()
                 pygame.display.update()
+                start_time1=time.time()
+                start_time2=time.time()
+
+                start_event.set()
+              
 
                 if thread1.is_alive() == False and thread2.is_alive() == False:
-                    startThread = True
-
+                    startThread = True 
+                while thread1.is_alive() or thread2.is_alive():
+                    if thread1.is_alive():
+                        thread1.join(0.1)
+                        end_time1=time.time()
+                    if thread2.is_alive():
+                        thread2.join(0.1)
+                        end_time2=time.time()
+               
+               
+              
+                print("Alg1 time: ",(end_time1-start_time1))
+                print("Alg2 time: ",(end_time2-start_time2))
         pygame.draw.rect(window, (170, 0, 0), settingButton)
         window.blit(text_button_settings, (width // 2.5, 75))
         pygame.draw.rect(window, (170, 0, 0), startButton)
         window.blit(text_button_start, (width // 2.5, 135))
 
         click = False
-        for event in pygame.event.get():
+        for event in pygame.event.get ():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
-        global thread1_time
-        global thread2_time
-        thread1_time_final = thread1_time
-        thread3_time_final = thread2_time
+        
+        thread1_time_final = end_time1-start_time1
+        thread3_time_final = end_time2-start_time2
         if (
             thread1 is not None
             and thread2 is not None
@@ -724,8 +605,8 @@ def main_menu(algo1, algo2):
                 winnerWindow(
                     winner_name,
                     loser_name,
-                    thread1_time,
-                    thread2_time,
+                    thread1_time_final,
+                    thread3_time_final,
                     alg1,
                     alg2,
                     num_bars,
@@ -748,16 +629,36 @@ def main_menu(algo1, algo2):
                 winnerWindow(
                     winner_name,
                     loser_name,
-                    thread2_time,
-                    thread1_time,
+                    thread3_time_final,
+                    thread1_time_final,
                     alg1,
                     alg2,
                     num_bars,
                 )
+            
                 showedWinner = True
 
                 pygame.display.update()
+            elif (
+                thread3_time_final == thread1_time_final
+                and not thread1.is_alive()
+                and not thread2.is_alive()
+                and not showedWinner
+            ):
+                winner_name = textoDeAlgoritmos(alg1, alg2)[1]
+                loser_name = textoDeAlgoritmos(alg1, alg2)[0]
+                clearArrays()
 
+                pygame.display.update()
+                tiedWindow(
+                    winner_name,
+                    loser_name,
+                    thread3_time_final,
+                    thread1_time_final,
+                    alg1,
+                    alg2,
+                    num_bars,
+                )
         pygame.display.update()
         clock.tick(60)
 
@@ -823,6 +724,58 @@ def winnerWindow(winner, loser, timeW, timeL, alg1, alg2, num_bars):
                     clearArrays()
                     break  # Exit the while loop
 
+
+def tiedWindow(winner, loser, timeW, alg1, alg2, num_bars):
+    # Cargar assets
+
+    click = False
+    showed_winner = False
+    img_winner = pygame.image.load(os.path.join("assets", "tied.jpg"))
+    img_winner = pygame.transform.scale(
+        img_winner, (int(img_winner.get_width()), int(img_winner.get_height()))
+    )
+    font = pygame.font.SysFont(None, 48)
+    font2 = pygame.font.SysFont(None, 40)
+
+    waiting = True  # waiting is truee just here
+
+    while waiting:
+        # Limpiar pantalla
+        window.blit(background, (0, 0))
+        # Preparar textos
+        title = font.render("¡GAME OVER!", True, white)
+        text = font.render(f"El {winner} y el {loser} han empatado!", True, white)
+        tw = round(timeW, 2)
+        winner_time_text = font2.render(f"Con un tiempo de: {tw} sec", True, white)
+        return_text = font.render(f"Press ESC to return to main menu", True, white)
+        # Mostrar en pantalla
+        window.blit(title, (width / 2 - title.get_width() / 2, 20))
+        window.blit(img_winner, (width / 2 - img_winner.get_width() / 2, 28))
+        x = (
+            width / 2
+            - max(
+                text.get_width()
+            )
+            / 2
+        )
+        y = 370
+        window.blit(text, (x, y))
+        window.blit(winner_time_text, (x, y + 50))
+        window.blit(return_text, (x, y + 120)) 
+        
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    waiting = False
+                    main_menu(quicksort, insertNodes)
+                    pygame.display.update()
+                    clearArrays()
+                    break  # Exit the while loop
 
 def textoDeAlgoritmos(alg1, alg2):
     img1, img2, texto1, texto2 = selectAlgLastSettings(alg1, alg2)
